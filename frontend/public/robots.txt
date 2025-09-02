@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://yt-converter.elfan.id/sitemap.xml
