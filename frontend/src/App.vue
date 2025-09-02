@@ -1,27 +1,26 @@
 <template>
   <div id="app" class="min-h-screen">
     <!-- Header -->
-    <header class="bg-white/80 backdrop-blur border-b border-gray-200 sticky top-0 z-50">
+  <header class="bg-gray-100/80 backdrop-blur-lg border-b border-gray-200/40 sticky top-0 z-50 supports-backdrop-blur:bg-gray-100/80 dark:bg-slate-900/10 dark:border-slate-700/40">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center py-4">
-          <div class="flex items-center space-x-3">
+          <a href="#" @click.prevent="goHome" class="flex items-center space-x-3 group">
             <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
               <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
               </svg>
             </div>
             <div>
-              <h1 class="text-2xl font-bold gradient-text">YT Converter</h1>
-              <p class="text-sm text-gray-600">Download YouTube Video & Audio</p>
+              <h1 class="text-2xl font-bold gradient-text group-hover:opacity-90">YT Converter</h1>
+              <p class="text-sm text-gray-600 dark:text-slate-400">Download YouTube Video & Audio</p>
             </div>
-          </div>
-          
-          <div class="hidden md:flex items-center space-x-4">
-            <a href="#features" class="text-gray-600 hover:text-primary-600 transition-colors">Fitur</a>
-            <a href="#/faq" class="text-gray-600 hover:text-primary-600 transition-colors">FAQ</a>
-            <a href="#/privacy" class="text-gray-600 hover:text-primary-600 transition-colors">Privasi</a>
-            <a href="#/disclaimer" class="text-gray-600 hover:text-primary-600 transition-colors">Disclaimer</a>
-          </div>
+          </a>
+          <nav class="hidden md:flex items-center space-x-1 text-sm font-medium">
+            <a href="#features" @click.prevent="scrollTo('features')" :class="navClass('features')">Fitur</a>
+            <a href="#/faq" :class="navClass('faq')">FAQ</a>
+            <a href="#/privacy" :class="navClass('privacy')">Privasi</a>
+            <a href="#/disclaimer" :class="navClass('disclaimer')">Disclaimer</a>
+          </nav>
         </div>
       </div>
     </header>
@@ -32,9 +31,9 @@
       <component :is="currentPageComponent" v-if="routePage" />
       <template v-else>
       <!-- Hero Section -->
-      <section class="py-16 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-4xl mx-auto text-center">
-          <h2 class="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+      <section class="py-20 px-0 w-full bg-gradient-to-b from-white to-slate-100 dark:from-slate-900 dark:to-slate-800">
+        <div class="w-full text-center">
+          <h2 class="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
             Download Video YouTube dengan
             <span class="gradient-text">Mudah & Cepat</span>
           </h2>
@@ -50,8 +49,8 @@
                 <input
                   v-model="youtubeUrl"
                   type="url"
-                  placeholder="Paste URL YouTube di sini..."
-                  class="input-field pr-12 text-lg"
+                  placeholder="Tempel URL YouTube di sini..."
+                  class="input-field pr-12 text-lg focus:shadow focus:shadow-primary-500/20 dark:bg-slate-800 dark:placeholder-slate-400"
                   :class="{ 'border-red-500': urlError }"
                   required
                 />
@@ -68,7 +67,7 @@
               
               <button 
                 type="submit" 
-                class="btn-primary w-full text-lg"
+                class="btn-gradient w-full text-lg"
                 :disabled="isLoading"
               >
                 <span v-if="isLoading" class="flex items-center justify-center">
@@ -138,7 +137,7 @@
                                      <!-- Quality Selector untuk MP4 -->
                    <div class="mb-4">
                      <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Kualitas Video:</label>
-                     <select v-model="selectedMp4Quality" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                     <select v-model="selectedMp4Quality" class="custom-select">
                        <option value="best">🎯 Kualitas Terbaik (Auto)</option>
                        <option v-for="format in videoInfo.videoFormats" :key="format.id" :value="format.synthetic ? format.id : ('itag_' + format.itag)">
                           📹 {{ format.synthetic ? format.quality : (format.quality || (format.height + 'p')) }} | {{ format.resolution }} | {{ format.fps }}fps | {{ format.synthetic ? 'Transcode' : format.size }}
@@ -149,7 +148,7 @@
                   
                   <button 
                     @click="downloadVideo('mp4', selectedMp4Quality)"
-                    class="btn-primary w-full"
+                    class="btn-gradient w-full"
                     :disabled="isDownloading"
                   >
                     <span v-if="isDownloading" class="flex items-center justify-center">
@@ -177,7 +176,7 @@
                                      <!-- Quality Selector untuk MP3 -->
                    <div class="mb-4">
                      <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Kualitas Audio:</label>
-                     <select v-model="selectedMp3Quality" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-transparent">
+                     <select v-model="selectedMp3Quality" class="custom-select">
                        <option value="best">🎵 Kualitas Terbaik (Auto)</option>
                        <option v-for="format in videoInfo.audioFormats" :key="format.itag" :value="format.itag">
                          🎧 {{ format.quality }} | {{ format.size }}
@@ -188,7 +187,7 @@
                   
                   <button 
                     @click="downloadVideo('mp3', selectedMp3Quality)"
-                    class="btn-primary w-full"
+                    class="btn-gradient w-full"
                     :disabled="isDownloading"
                   >
                     <span v-if="isDownloading" class="flex items-center justify-center">
@@ -229,42 +228,42 @@
       </section>
 
       <!-- Features Section -->
-      <section id="features" class="py-16 px-4 sm:px-6 lg:px-8 bg-white/50">
+  <section id="features" class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-slate-100 to-slate-200 dark:from-slate-900 dark:to-slate-800 scroll-mt-24">
         <div class="max-w-7xl mx-auto">
           <div class="text-center mb-12">
-            <h3 class="text-3xl font-bold text-gray-900 mb-4">Fitur Unggulan</h3>
-            <p class="text-lg text-gray-600">Semua yang Anda butuhkan untuk download video YouTube</p>
+            <h3 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Fitur Unggulan</h3>
+            <p class="text-lg text-gray-600 dark:text-slate-400">Semua yang Anda butuhkan untuk download video YouTube</p>
           </div>
           
           <div class="grid md:grid-cols-3 gap-8">
-            <div class="text-center">
-              <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div class="feature-card group" style="background:#23293a;color:#fff;">
+              <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-              <h4 class="text-xl font-semibold text-gray-900 mb-2">Download Cepat</h4>
-              <p class="text-gray-600">Teknologi streaming yang dioptimalkan untuk download yang cepat dan efisien</p>
+              <h4 class="text-xl font-semibold mb-2" style="color:#fff;">Download Cepat</h4>
+              <p class="text-base" style="color:#fff;opacity:0.85;">Teknologi streaming yang dioptimalkan untuk download yang cepat dan efisien</p>
             </div>
             
-            <div class="text-center">
-              <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div class="feature-card group" style="background:#23293a;color:#fff;">
+              <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                 </svg>
               </div>
-              <h4 class="text-xl font-semibold text-gray-900 mb-2">Format Fleksibel</h4>
-              <p class="text-gray-600">Pilih antara MP4 untuk video atau MP3 untuk audio sesuai kebutuhan Anda</p>
+              <h4 class="text-xl font-semibold mb-2" style="color:#fff;">Format Fleksibel</h4>
+              <p class="text-base" style="color:#fff;opacity:0.85;">Pilih antara MP4 untuk video atau MP3 untuk audio sesuai kebutuhan Anda</p>
             </div>
             
-            <div class="text-center">
-              <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div class="feature-card group" style="background:#23293a;color:#fff;">
+              <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h4 class="text-xl font-semibold text-gray-900 mb-2">100% Aman</h4>
-              <p class="text-gray-600">Tidak ada iklan, tidak ada malware, hanya download yang bersih dan aman</p>
+              <h4 class="text-xl font-semibold mb-2" style="color:#fff;">100% Aman</h4>
+              <p class="text-base" style="color:#fff;opacity:0.85;">Tidak ada iklan, tidak ada malware, hanya download yang bersih dan aman</p>
             </div>
           </div>
         </div>
@@ -277,7 +276,7 @@
     <footer class="bg-gray-900 text-white py-8">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <p class="text-gray-400">
-          © {{ currentYear }} YT Converter. Dibuat oleh ❤️ <a href="https://tegar-aja.xyz" target="_blank" rel="noopener" class="underline hover:text-white">tegar-aja</a> menggunakan Node.js & Vue.js.
+          © {{ currentYear }} YT Converter. Dibuat oleh ❤️ <a href="https://tegar-aja.xyz" target="_blank" rel="noopener" class="underline hover:text-white">tegar-aja</a>.
         </p>
         <p class="text-sm text-gray-500 mt-2">
           Hanya untuk penggunaan pribadi. Hormati hak cipta konten.
@@ -299,7 +298,7 @@ export default {
   setup() {
     const youtubeUrl = ref('')
     const routePage = ref('')
-    const currentPageComponent = computed(()=>{
+  const currentPageComponent = computed(()=>{
       switch(routePage.value){
         case 'faq': return FaqPage
         case 'privacy': return PrivacyPage
@@ -446,6 +445,32 @@ export default {
       console.log('Image loaded successfully:', event.target.src)
     }
 
+    const goHome = () => {
+      window.location.hash = ''
+      routePage.value = ''
+      // Smooth scroll to top
+      window.scrollTo({ top:0, behavior:'smooth' })
+    }
+
+    const scrollTo = (id) => {
+      // if route page active, go home first
+      if (routePage.value) {
+        goHome()
+        setTimeout(()=>scrollTo(id), 50)
+        return
+      }
+      const el = document.getElementById(id)
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+
+    const navClass = (name) => {
+      const active = (name === 'features' && !routePage.value) || routePage.value === name
+      return [
+        'nav-pill-base',
+        active ? 'nav-pill-active' : 'nav-pill-idle'
+      ].join(' ')
+    }
+
     const currentYear = new Date().getFullYear()
     return {
       youtubeUrl,
@@ -462,9 +487,12 @@ export default {
       formatNumber,
       handleImageError,
       handleImageLoad,
-      currentYear,
+  currentYear,
   routePage,
-  currentPageComponent
+  currentPageComponent,
+  goHome,
+  scrollTo,
+  navClass
     }
   }
 }
